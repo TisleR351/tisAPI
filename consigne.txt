@@ -1,0 +1,4 @@
+Je veux une API qui controle si une année est bissectile avec 3 endpoints:
+- POST: I: Une année O: Bool (L'Input et l'output doit être sauvé) EX I: 2024 O: True 
+- POST: I: Une range d'année O: List d'année bissectile (L'Input et l'output doit être sauvé) EX I: 2023, 2029 O: [2024,2028] 
+- Get: L'historique de toute les demandes

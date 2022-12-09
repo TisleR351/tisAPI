@@ -20,7 +20,7 @@ from django.urls import path, include
 from bissextile.views import YearViewset
 
 router = routers.SimpleRouter()
-router.register('year', YearViewset, basename='year')
+router.register(r'year', YearViewset, basename='year')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

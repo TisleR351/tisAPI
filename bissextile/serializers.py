@@ -1,9 +1,10 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from bissextile.models import Year
 
 
-class YearSerializer(serializers.ModelSerializer):
+class YearSerializer(ModelSerializer):
 
     class Meta:
         model = Year
-        fields = ['id', 'date_created', 'date_updated', 'year', 'is_bissextile']
+        fields = ['year', 'is_bissextile']
+
