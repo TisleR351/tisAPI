@@ -1,10 +1,18 @@
+# Django imports
+# DRF imports
 from rest_framework.serializers import ModelSerializer
+# Application imports
 from bissextile.models import Year
 
 
-class YearSerializer(ModelSerializer):
-
+class YearListSerializer(ModelSerializer):
     class Meta:
         model = Year
-        fields = ['year', 'is_bissextile']
+        fields = ['id', 'year', 'bissextile']
+
+
+class YearPostSerializer(ModelSerializer):
+    class Meta:
+        model = Year
+        fields = ['year', 'bissextile']
 
