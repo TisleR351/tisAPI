@@ -19,11 +19,12 @@ from django.contrib import admin
 # DRF imports
 from rest_framework.urlpatterns import format_suffix_patterns
 # Application imports
-from bissextile.views import YearList, YearDetail, YearRangeList, YearRangeDetail
+from bissextile.views import YearList, YearDetail, YearRangeList, YearRangeDetail, HistoryList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/history/', HistoryList.as_view()),
     path('api/years/', YearList.as_view()),
     path('api/years_range/', YearRangeList.as_view()),
     path('api/years/<int:pk>/', YearDetail.as_view()),

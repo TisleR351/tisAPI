@@ -4,10 +4,15 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.serializers import DateTimeField
 # Application imports
+from itertools import chain
 from bissextile.models import Year, YearRange
-from bissextile.serializers import YearSerializer, YearDetailSerializer, YearRangeSerializer, YearRangeDetailSerializer
-
+from bissextile.serializers import YearSerializer, \
+    YearDetailSerializer, \
+    YearRangeSerializer, \
+    YearRangeDetailSerializer, \
+    HistorySerializer
 
 class YearList(APIView):
 
@@ -75,10 +80,14 @@ class YearRangeList(APIView):
         annee_range = []
         annee1 = int(request.POST.get("year1"))
         annee2 = int(request.POST.get("year2"))
+        cpt = 0
         for i in range(annee2 - annee1 + 1):
             if YearList().bissextile(annee1+i):
+                cpt += 1
                 annee_range.append(str(annee1+i))
-                string_annee = ''.join(str(x)+", " for x in annee_range)
+                string_annee = "".join(str(x)+", " for x in annee_range)
+            if cpt == 0:
+                string_annee = ""
         request.data._mutable = True
         request.data.update({"year1": annee1, "year2": annee2, "year_range": string_annee})
         request.data._mutable = False
@@ -116,3 +125,15 @@ class YearRangeDetail(APIView):
         year = self.get_object(pk)
         year.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class HistoryList(APIView):
+    def get(self, request, format=None):
+        list_history = sorted(chain(Year.objects.all(), YearRange.objects.all()),
+                          key=lambda instance: instance.date_created)
+        result = {}
+        for object in list_history:
+            if type(object) == Year:
+                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = "[" + str(object.year) + ", " + str(object.bissextile) + "]"
+            else:
+                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = "[[" + str(object.year1) + "," + str(object.year2) + "], [" + str(object.year_range) + "]]"
+        return Response(result)
