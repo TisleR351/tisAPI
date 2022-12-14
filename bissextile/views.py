@@ -10,8 +10,7 @@ from bissextile.models import Year, YearRange
 from bissextile.serializers import YearSerializer, \
     YearDetailSerializer, \
     YearRangeSerializer, \
-    YearRangeDetailSerializer, \
-    HistorySerializer
+    YearRangeDetailSerializer
 
 class YearList(APIView):
 
@@ -71,9 +70,17 @@ class YearDetail(APIView):
 
 class YearRangeList(APIView):
     def get(self, request, format=None):
-        years = YearRange.objects.all()
-        serializer = YearRangeSerializer(years, many=True)
-        return Response(serializer.data)
+        result = {}
+        for object in YearRange.objects.all():
+            tab_int = []
+            try:
+                for elmts in object.year_range.split(","):
+                    tab_int.append(int(elmts))
+                tableau = [[object.year1, object.year2], tab_int]
+            except:
+                tableau = [[object.year1, object.year2], [None]]
+            result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
+        return Response(result)
 
     def post(self, request, format=None):
         annee_range = []
@@ -108,9 +115,16 @@ class YearRangeDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        year = self.get_object(pk)
-        serializer = YearRangeDetailSerializer(year)
-        return Response(serializer.data)
+        result = {}
+        try:
+            tab_int = []
+            for elmts in self.get_object(pk).year_range.split(","):
+                tab_int.append(int(elmts))
+            tableau = [[self.get_object(pk).year1, self.get_object(pk).year2], tab_int]
+        except:
+            tableau = [[self.get_object(pk).year1, self.get_object(pk).year2], [None]]
+        result[str(self.get_object(pk).date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
+        return Response(result)
 
     def put(self, request, pk, format=None):
         year = self.get_object(pk)
@@ -136,8 +150,11 @@ class HistoryList(APIView):
                 result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
             else:
                 tab_int = []
-                for elmts in object.year_range.split(","):
-                    tab_int.append(int(elmts))
-                tableau = [[object.year1, object.year2], tab_int]
+                try:
+                    for elmts in object.year_range.split(","):
+                        tab_int.append(int(elmts))
+                    tableau = [[object.year1, object.year2], tab_int]
+                except:
+                        tableau = [[object.year1, object.year2], [None]]
                 result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
         return Response(result)
