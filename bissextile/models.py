@@ -19,7 +19,7 @@ class YearRange(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     year1 = models.IntegerField(default=0)
     year2 = models.IntegerField(default=0)
-    year_range = models.CharField(max_length=99999, default="")
+    year_range = models.CharField(max_length=9999999)
 
     def __str__(self):
         return f'{self.year1}, {self.year2}'
