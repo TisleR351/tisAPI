@@ -4,7 +4,6 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.serializers import DateTimeField
 # Application imports
 from itertools import chain
 from bissextile.models import Year, YearRange
@@ -85,7 +84,7 @@ class YearRangeList(APIView):
             if YearList().bissextile(annee1+i):
                 cpt += 1
                 annee_range.append(str(annee1+i))
-                string_annee = "".join(str(x)+", " for x in annee_range)
+                string_annee = ",".join(str(x) for x in annee_range)
             if cpt == 0:
                 string_annee = ""
         request.data._mutable = True
@@ -133,7 +132,12 @@ class HistoryList(APIView):
         result = {}
         for object in list_history:
             if type(object) == Year:
-                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = "[" + str(object.year) + ", " + str(object.bissextile) + "]"
+                tableau = [object.year, object.bissextile]
+                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
             else:
-                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = "[[" + str(object.year1) + "," + str(object.year2) + "], [" + str(object.year_range) + "]]"
+                tab_int = []
+                for elmts in object.year_range.split(","):
+                    tab_int.append(int(elmts))
+                tableau = [[object.year1, object.year2], tab_int]
+                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
         return Response(result)
