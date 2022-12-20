@@ -26,16 +26,14 @@ class YearList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        annee = int(request.POST.get("year"))
+        annee = int(request.data['year'])
         bissextile = self.bissextile(annee)
-        request.data._mutable = True
-        request.data.update({"year": annee, "bissextile": bissextile})
-        request.data._mutable = False
-        serializer = YearSerializer(data=request.data)
+        liste_attributs = {"year": annee, "bissextile": bissextile}
+        serializer = YearSerializer(data=liste_attributs)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         for year in Year.objects.all():
-            if year.year == request.POST.get("year"):
+            if year.year == int(request.data['year']):
                 print("L'objet est déjà créé et son ID est:" + str(year.id))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         serializer.save()
@@ -54,18 +52,10 @@ class YearDetail(APIView):
         serializer = YearDetailSerializer(year)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        year = self.get_object(pk)
-        serializer = YearDetailSerializer(year, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def delete(self, request, pk, format=None):
         year = self.get_object(pk)
         year.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("L'objet a bien été supprimé", status=status.HTTP_204_NO_CONTENT)
 
 
 class YearRangeList(APIView):
@@ -84,8 +74,8 @@ class YearRangeList(APIView):
 
     def post(self, request, format=None):
         annee_range = []
-        annee1 = int(request.POST.get("year1"))
-        annee2 = int(request.POST.get("year2"))
+        annee1 = int(request.data['year1'])
+        annee2 = int(request.data['year2'])
         cpt = 0
         for i in range(annee2 - annee1 + 1):
             if YearList().bissextile(annee1+i):
@@ -94,14 +84,12 @@ class YearRangeList(APIView):
                 string_annee = ",".join(str(x) for x in annee_range)
             if cpt == 0:
                 string_annee = ""
-        request.data._mutable = True
-        request.data.update({"year1": annee1, "year2": annee2, "year_range": string_annee})
-        request.data._mutable = False
-        serializer = YearRangeSerializer(data=request.data)
+        dict_okay = {"year1": annee1, "year2": annee2, "year_range": string_annee}
+        serializer = YearRangeSerializer(data=dict_okay)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         for year in YearRange.objects.all():
-            if year.year1 == request.POST.get("year1") and year.year2 == request.POST.get("year2"):
+            if year.year1 == int(request.data['year1']) and year.year2 == int(request.data['year2']):
                 print("L'objet est déjà créé et son ID est:" + str(year.id))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         serializer.save()
@@ -125,14 +113,6 @@ class YearRangeDetail(APIView):
             tableau = [[self.get_object(pk).year1, self.get_object(pk).year2], [None]]
         result[str(self.get_object(pk).date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
         return Response(result)
-
-    def put(self, request, pk, format=None):
-        year = self.get_object(pk)
-        serializer = YearRangeDetailSerializer(year, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         year = self.get_object(pk)
