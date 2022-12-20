@@ -20,15 +20,22 @@ from django.contrib import admin
 from rest_framework.urlpatterns import format_suffix_patterns
 # Application imports
 from bissextile.views import YearList, YearDetail, YearRangeList, YearRangeDetail, HistoryList
+from calculatrice.views import AdditionList, MultiplicationList, DivisionList, SoustractionList, ModuloList, AllList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/history/', HistoryList.as_view()),
-    path('api/years/', YearList.as_view()),
-    path('api/years_range/', YearRangeList.as_view()),
+    path('api/history/', HistoryList.as_view(), name='history'),
+    path('api/years/', YearList.as_view(), name='years'),
+    path('api/years_range/', YearRangeList.as_view(), name='years_range'),
     path('api/years/<int:pk>/', YearDetail.as_view()),
     path('api/years_range/<int:pk>/', YearRangeDetail.as_view()),
+    path('api/addition/', AdditionList.as_view(), name='addition'),
+    path('api/soustraction/', SoustractionList.as_view(), name='soustraction'),
+    path('api/multiplication/', MultiplicationList.as_view(), name='multiplication'),
+    path('api/modulo/', ModuloList.as_view(), name='modulo'),
+    path('api/division/', DivisionList.as_view(), name='division'),
+    path('api/listoperation/', AllList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
