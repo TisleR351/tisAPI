@@ -20,7 +20,7 @@ from django.contrib import admin
 from rest_framework.urlpatterns import format_suffix_patterns
 # Application imports
 from bissextile.views import YearList, YearDetail, YearRangeList, YearRangeDetail, HistoryList
-from calculatrice.views import AdditionList, MultiplicationList, DivisionList, SoustractionList, ModuloList, AllList
+from calculatrice.views import AdditionList, MultiplicationList, DivisionList, SoustractionList, ModuloList, AllList, hello
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,6 +36,7 @@ urlpatterns = [
     path('api/modulo/', ModuloList.as_view(), name='modulo'),
     path('api/division/', DivisionList.as_view(), name='division'),
     path('api/listoperation/', AllList.as_view()),
+    path('api/', hello),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
