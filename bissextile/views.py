@@ -9,8 +9,8 @@ from itertools import chain
 from bissextile.models import Year, YearRange
 from bissextile.serializers import YearSerializer, \
     YearDetailSerializer, \
-    YearRangeSerializer, \
-    YearRangeDetailSerializer
+    YearRangeSerializer
+
 
 class YearList(APIView):
 
@@ -60,20 +60,13 @@ class YearDetail(APIView):
 
 class YearRangeList(APIView):
     def get(self, request, format=None):
-        result = {}
-        for object in YearRange.objects.all():
-            tab_int = []
-            try:
-                for elmts in object.year_range.split(","):
-                    tab_int.append(int(elmts))
-                tableau = [[object.year1, object.year2], tab_int]
-            except:
-                tableau = [[object.year1, object.year2], [None]]
-            result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
-        return Response(result)
+        yearsRange = YearRange.objects.all()
+        serializer = YearRangeSerializer(yearsRange, many=True)
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         annee_range = []
+        string_annee = ""
         annee1 = int(request.data['year1'])
         annee2 = int(request.data['year2'])
         cpt = 0
@@ -127,7 +120,7 @@ class HistoryList(APIView):
         for object in list_history:
             if type(object) == Year:
                 tableau = [object.year, object.bissextile]
-                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
+                result[str(object.date_created.strftime("%d/%m/%Y %H:%M:%S"))] = tableau
             else:
                 tab_int = []
                 try:
@@ -136,5 +129,5 @@ class HistoryList(APIView):
                     tableau = [[object.year1, object.year2], tab_int]
                 except:
                         tableau = [[object.year1, object.year2], [None]]
-                result[str(object.date_created.strftime("%d%m%Y %H:%M:%S"))] = tableau
+                result[str(object.date_created.strftime("%d/%m/%Y %H:%M:%S"))] = tableau
         return Response(result)

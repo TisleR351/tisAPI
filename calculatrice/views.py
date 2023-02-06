@@ -1,12 +1,17 @@
 # Django imports
+from django.shortcuts import render
 # DRF imports
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 # Application imports
 from calculatrice.models import Operation
 from calculatrice.requetes import Requetes
+
+
 # Create your views here.
+def hello(request):
+    return render(request, 'hello.html')
+
 
 class AdditionList(APIView):
     def get(self, request, format=None):

@@ -6,9 +6,10 @@ from bissextile.models import Year, YearRange
 
 
 class YearSerializer(ModelSerializer):
+    date_created = DateTimeField(format="%d%m%Y %H:%M:%S")
     class Meta:
         model = Year
-        fields = ['id', 'year', 'bissextile']
+        fields = ['id', 'year', 'date_created', 'bissextile']
 
 
 class YearDetailSerializer(ModelSerializer):
@@ -21,9 +22,10 @@ class YearDetailSerializer(ModelSerializer):
 
 
 class YearRangeSerializer(ModelSerializer):
+    date_created = DateTimeField(format="%d%m%Y %H:%M:%S")
     class Meta:
         model = YearRange
-        fields = ['id', 'year1', 'year2', 'year_range']
+        fields = ['id', 'year1', 'year2', 'date_created', 'year_range']
 
 
 class YearRangeDetailSerializer(ModelSerializer):

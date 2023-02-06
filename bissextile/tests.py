@@ -12,7 +12,7 @@ class TestYear(APITestCase):
     def test_post(self):
         response = self.client.post(self.url, {"year": 1900, "bissextile": False}, format='json')
         self.assertEqual(response.status_code, 201)
-        expected = {"id": response.data['id'], "year": 1900, "bissextile": False}
+        expected = {"id": 1, "year": 1900, "bissextile": False}
         self.assertEqual(response.data, expected)
 
     def test_list(self):
